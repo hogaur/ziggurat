@@ -41,7 +41,7 @@
    - max.in.flight.requests.per.connection
    - enable.idempotencecd
 
-   Please see [Producer configs](http://kafka.apache.org/documentation.html#producerconfigs)
+   Please see [producer configs](http://kafka.apache.org/documentation.html#producerconfigs)
    for a complete list of all producer configs available in Kafka."
 
   (:require [ziggurat.config :refer [ziggurat-config]]
