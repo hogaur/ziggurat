@@ -54,6 +54,17 @@
                                       [org.clojure/test.check "0.9.0"]]
                        :plugins      [[lein-cloverage "1.0.13"]]
                        :repositories [["confluent-repo" "https://packages.confluent.io/maven/"]]}
+             :javatest {:aot :all
+                        :java-source-paths ["src/com", "test/tech"]
+                        :dependencies [[junit/junit "4.12"]
+                                       [tech.gojek/ziggurat-test-utils "1.0.0-SNAPSHOT"]]
+                        :plugins [[lein-junit "1.1.9"]]
+                        :junit ["test/tech"]
+                        ;:junit-formatter :plain
+                        :junit-results-dir "test-results"}
+                        ;:repositories [["confluent-repo" "https://packages.confluent.io/maven/"]]}
+                        ;:repositories {"local" {:url #=(eval (str "file:/" (.get (System/getenv) "HOME") "/.m2/repository/tech/gojek/ziggurat-test-utils/1.0.0-SNAPSHOT/"))
+                        ;                        :releases {:checksum :ignore}}}}
              :dev     {:plugins  [[lein-cljfmt "0.6.3"]
                                   [lein-cloverage "1.0.13"]
                                   [lein-kibit "0.1.6"]]}
