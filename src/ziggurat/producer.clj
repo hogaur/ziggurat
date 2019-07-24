@@ -51,10 +51,7 @@
            (java.util Properties))
   (:gen-class
     :name tech.gojek.ziggurat.Producer
-    :methods  [^{:static true} [send [clojure.lang.Keyword String int String String] void]
-               ^{:static true} [send [clojure.lang.Keyword String String String] void]
-               ^{:static true} [send [clojure.lang.Keyword String int "[B" "[B"] void]
-               ^{:static true} [send [clojure.lang.Keyword String "[B" "[B"] void]]))
+    :methods  [^{:static true} [send [clojure.lang.Keyword String Object Object] void]]))
 
 
 (defn- producer-properties-from-config [{:keys [bootstrap-servers

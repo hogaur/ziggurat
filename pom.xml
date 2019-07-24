@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>tech.gojek</groupId>
   <artifactId>ziggurat</artifactId>
   <packaging>jar</packaging>
   <version>4.0.0-alpha.3</version>
-
   <name>ziggurat</name>
   <description>A stream processing framework to build stateless applications on kafka</description>
-
   <url>https://github.com/gojektech/ziggurat</url>
-
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
       <url>https://www.apache.org/licenses/LICENSE-2.0</url>
     </license>
   </licenses>
-
   <scm>
     <url>https://github.com/gojek/ziggurat</url>
     <connection>scm:git:git://github.com/gojek/ziggurat.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/gojek/ziggurat.git</developerConnection>
-    <tag>4175717261158e5258bb70ef3fcfc7f7e9bc940d</tag>
+    <tag>9a851288a66864f9402c34f222933b01698a297e</tag>
   </scm>
-
-  <!-- ========================================== BUILD =============================================================-->
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
@@ -41,7 +34,6 @@
     </testResources>
     <directory>target</directory>
     <outputDirectory>target/classes</outputDirectory>
-
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -60,35 +52,11 @@
               </sources>
             </configuration>
           </execution>
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>test/java</source>
-              </sources>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-  <!-- ========================================== REPOSITORIES ======================================================-->
   <repositories>
-    <repository>
-      <id>icm</id>
-      <url>https://maven.ceon.pl/artifactory/repo/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
     <repository>
       <id>central</id>
       <url>https://repo1.maven.org/maven2/</url>
@@ -110,14 +78,9 @@
       </releases>
     </repository>
   </repositories>
-
-
   <dependencyManagement>
     <dependencies/>
   </dependencyManagement>
-
-  <!-- ========================================== BUILD DEPENDENCIES ================================================-->
-
   <dependencies>
     <dependency>
       <groupId>bidi</groupId>
@@ -285,20 +248,18 @@
       <artifactId>new-reliquary</artifactId>
       <version>1.0.0</version>
     </dependency>
-
-    <!-- ========================================== TEST DEPENDENCIES ===============================================-->
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
       <version>3.5.1</version>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>io.confluent</groupId>-->
-<!--      <artifactId>kafka-schema-registry</artifactId>-->
-<!--      <version>4.1.1</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>io.confluent</groupId>
+      <artifactId>kafka-schema-registry</artifactId>
+      <version>4.1.1</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
