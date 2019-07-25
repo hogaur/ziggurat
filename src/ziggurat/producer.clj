@@ -50,9 +50,8 @@
   (:import (org.apache.kafka.clients.producer KafkaProducer ProducerRecord ProducerConfig)
            (java.util Properties))
   (:gen-class
-    :name tech.gojek.ziggurat.Producer
-    :methods  [^{:static true} [send [clojure.lang.Keyword String Object Object] void]]))
-
+   :name tech.gojek.ziggurat.Producer
+   :methods  [^{:static true} [send [clojure.lang.Keyword String Object Object] void]]))
 
 (defn- producer-properties-from-config [{:keys [bootstrap-servers
                                                 acks
@@ -125,7 +124,6 @@
      (let [error-msg (str "Can't publish data. No producers defined for stream config [" stream-config-key "]")]
        (log/error error-msg)
        (throw (ex-info error-msg {:stream-config-key stream-config-key}))))))
-
 
 (defn -send
   ([stream-config-key topic key value]
