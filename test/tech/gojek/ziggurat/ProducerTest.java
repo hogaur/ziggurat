@@ -52,6 +52,25 @@ public class ProducerTest {
         Assert.assertEquals("Sent from Java", new String(result.get(0).value));
     }
 
+    /**
+     * Following test should fail because consumer is trying to deserialize a byte
+     * array data using StringDeserializer.
+     *
+     * @throws InterruptedException
+     */
+    @Test(expected = ClassCastException.class)
+    public void shouldFailWhileSendingByteArrayData() throws InterruptedException {
+        String kafkaTopic = "ziggurat-java-test-byte-array";
+        Producer.send(Keyword.intern("with-byte-array-producer"), kafkaTopic, "Key".getBytes(), "Sent from Java".getBytes());
+
+        List<KeyValue<byte[],byte[]>> result = IntegrationTestUtils.waitUntilMinKeyValueRecordsReceived(getStringConsumerConfig(),
+                kafkaTopic, 1, 2000);
+
+        //Byte arrays converted to strings for comparison
+        Assert.assertEquals("Key", new String(result.get(0).key));
+        Assert.assertEquals("Sent from Java", new String(result.get(0).value));
+    }
+
     @Test
     public void shouldSendDataWithDifferentTypesForKeyAndValue() throws InterruptedException {
         String kafkaTopic = "ziggurat-java-test-diff-types";

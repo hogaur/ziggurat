@@ -50,6 +50,8 @@
         (is (= key (.key (.get result 0))))
         (is (= value (.value (.get result 0))))))))
 
+;; This test should have failed because the test is trying to consume
+;; a byte array data using StringDeserializer class.
 (deftest should-send-byte-array-data
   (testing "producer should be able to send key value pairs of type Byte Array"
     (let [alphanum-gen (gen/such-that #(not (blank? %)) gen/string-alphanumeric)
@@ -59,6 +61,18 @@
       (Producer/send :with-byte-array-producer kafka-topic key value)
       (let [result (IntegrationTestUtils/waitUntilMinKeyValueRecordsReceived
                      (getConsumerConfigForKeyAndValueOfTypeString) kafka-topic 1 2000)]
+        (is (= "Key" (String. (.key (.get result 0)))))
+        (is (= "Sent from Java" (String. (.value (.get result 0)))))))))
+
+(deftest should-send-byte-array-data
+  (testing "producer should be able to send key value pairs of type Byte Array"
+    (let [alphanum-gen (gen/such-that #(not (blank? %)) gen/string-alphanumeric)
+          kafka-topic  (gen/generate alphanum-gen 10)
+          key (.getBytes "Key")
+          value (.getBytes "Sent from Java")]
+      (Producer/send :with-byte-array-producer kafka-topic key value)
+      (let [result (IntegrationTestUtils/waitUntilMinKeyValueRecordsReceived
+                     (getConsumerConfigForKeyAndValueOfTypeByteArray) kafka-topic 1 2000)]
         (is (= "Key" (String. (.key (.get result 0)))))
         (is (= "Sent from Java" (String. (.value (.get result 0)))))))))
 
