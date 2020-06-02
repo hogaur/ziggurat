@@ -2,7 +2,7 @@
 
 (defprotocol RetryProtocol
   "A Protocol that defines the interface for retries in Ziggurat using message queue implementation."
-  (initialize [impl rabbitmq-config])
+  (initialize [impl])
   (cleanup [impl])
   (retry
     [impl message-payload queue-name queue-type]
