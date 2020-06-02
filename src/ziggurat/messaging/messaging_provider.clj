@@ -1,16 +1,17 @@
 (ns ziggurat.messaging.messaging-provider
   (:require [ziggurat.config :refer [statsd-config ziggurat-config]]
             [clojure.tools.logging :as log]
-            [mount.core :refer [defstate]])
-  (:import (ziggurat.messaging.interface.producer Producer)))
+            [ziggurat.messaging.interface.producer]
+            [ziggurat.messaging.interface.producer :as prod-protocol]
+            [mount.core :refer [defstate]]))
 
-(def ^{:private true} ^Producer producer-impl (atom nil))
+(def ^{:private true} producer-impl (atom nil))
 
 (defn- get-implementation-class [class-config-keys]
   (if-let [constructor-clazz (get-in (ziggurat-config) class-config-keys)]
-    (let  [constructor-class-symbol (symbol constructor-clazz)
-          _                             (require [(symbol (namespace constructor-class-symbol))])
-          constructor            (resolve constructor-class-symbol)]
+    (let [constructor-class-symbol (symbol constructor-clazz)
+          _                        (require [(symbol (namespace constructor-class-symbol))])
+          constructor              (resolve constructor-class-symbol)]
 
       (if (nil? constructor)
         (throw (ex-info (format "No implementation exists for the configured class: [%s] Please fix it." constructor-clazz) {:constructor-configured constructor-clazz}))
@@ -23,9 +24,9 @@
     (throw (ex-message "Messaging provider not configured."))))
 
 (defstate producer
-          :start (do (log/info "Initializing the Producer")
+          :start (do (println "Initializing the Producer")
                      (initialise-message-producer)
-                     (.initialize producer-impl)
+                     (prod-protocol/initialize producer-impl)
                      producer-impl)
           :stop (do (log/info "Stopping the Producer")
-                    (.terminate producer-impl)))
+                    (prod-protocol/terminate producer-impl)))
