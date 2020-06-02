@@ -5,10 +5,10 @@
 
 (deftype RabbitMQProducer []
   Producer
-  (initialize [this] #(println "I'm initializing"))
-    ;(mount/start connection)
-    ;(make-queues))
+  (initialize [this] (println "I'm initializing"))
+  ;(mount/start connection)
+  ;(make-queues))
   (terminate [this]
-    #(println "I'm terminating"))
+    (println "I'm terminating"))
   (publish [this message-payload]
-    #(println "I'm publishing")))
+    (println "I'm publishing")))
