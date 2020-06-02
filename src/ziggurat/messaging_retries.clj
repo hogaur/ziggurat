@@ -1,4 +1,4 @@
-(ns ziggurat.retries
+(ns ziggurat.messaging-retries
   (:require [mount.core :refer [defstate]]
             [clojure.tools.logging :as log]
             [ziggurat.retry-interface :as retry-interface]))
