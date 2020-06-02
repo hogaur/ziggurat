@@ -18,6 +18,8 @@
                                 (concat all-channel-vec (get-keys-for-topic stream-routes topic-entity)))
                               []
                               stream-routes)]
+    (println "All channels => " all-channels)
+    (println "Retry enabled => " (-> (ziggurat-config) :retry :enabled) )
     (or (pos? (count all-channels))
         (-> (ziggurat-config) :retry :enabled))))
 

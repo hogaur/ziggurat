@@ -2,7 +2,8 @@
   (:require [ziggurat.config :refer [statsd-config ziggurat-config]]
             [clojure.tools.logging :as log]
             [ziggurat.messaging.interface.producer]
-            [mount.core :refer [defstate]])
+            [mount.core :refer [defstate]]
+            [mount.core :as mount])
   (:import (ziggurat.messaging.interface.producer Producer)))
 
 
@@ -25,7 +26,7 @@
 (defstate producer
           :start (do (println "Initializing the Producer")
                      (let [^Producer producer-impl (initialise-message-producer)]
-                       (.initialize producer-impl)
+                       (.initialize producer-impl (mount/args))
                        producer-impl))
           :stop (do (log/info "Stopping the Producer")
                     (.terminate producer)))

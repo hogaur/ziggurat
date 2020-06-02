@@ -32,7 +32,7 @@
   - tags : these are the tags attached to each metric. They are passed in the form of a clojure map e.g. {:topic_entity \"stream\" :actor \"application\"} which can then be converted to statsd specific tags (see `ziggurat.clj-statsd-metrics-wrapper` namespace for example)
   - value : the value which is to be reported for the timing.
   "
-  (initialize [impl])
+  (initialize [impl args])
   (terminate  [impl])
   (publish [impl message-payload]))
 

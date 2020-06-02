@@ -1,11 +1,17 @@
 (ns ziggurat.messaging.impl.rabbitmq.rabbitmq-producer
   (:require [ziggurat.messaging.impl.rabbitmq.connection]
+            [ziggurat.messaging.impl.rabbitmq.create-rabbitmq-queues :as queues]
+            [ziggurat.config :as config]
+            [ziggurat.messaging.connection]
             [mount.core :as mount])
   (:import (ziggurat.messaging.interface.producer Producer)))
 
 (deftype RabbitMQProducer []
   Producer
-  (initialize [this] (println "I'm initializing"))
+  (initialize [this args] (do (println "I'm initializing")
+                              (println "args => " args)
+                              (mount/start #{#'ziggurat.messaging.connection/connection})
+                              (queues/make-queues (:stream-routes args))))
   ;(mount/start connection)
   ;(make-queues))
   (terminate [this]
