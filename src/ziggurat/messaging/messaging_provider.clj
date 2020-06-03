@@ -26,7 +26,7 @@
 
 (defn start-required-states []
   (-> (mount/only
-        ;;required states for producer to start up and create queues
+        ;;required states for producer to start up and create queues | move this logic to init
        #{#'ziggurat.config/config
          #'ziggurat.tracer/tracer
          #'ziggurat.messaging.connection/connection})
