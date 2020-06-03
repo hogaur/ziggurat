@@ -7,6 +7,7 @@
             [ziggurat.messaging.connection :as messaging-connection]
             [ziggurat.messaging.consumer :as messaging-consumer]
             [ziggurat.messaging.producer :as messaging-producer]
+            [ziggurat.messaging.messaging-provider :as messaging-provider]
             [ziggurat.metrics :as metrics]
             [ziggurat.nrepl-server :as nrepl-server]
             [ziggurat.producer :as producer :refer [kafka-producers]]
@@ -38,6 +39,10 @@
   (start-rabbitmq-connection args)
   (messaging-producer/make-queues (get args :stream-routes)))
 
+(defn start-messaging-producer [args]
+  (start-rabbitmq-connection args)
+  (start* #{#'messaging-provider/producer} args))
+
 (defn start-kafka-producers []
   (start* #{#'kafka-producers}))
 
@@ -46,7 +51,8 @@
 
 (defn start-stream [args]
   (start-kafka-producers)
-  (start-rabbitmq-producers args)
+  ;(start-rabbitmq-producers args)
+  (start-messaging-producer args)
   (start-kafka-streams args))
 
 (defn start-management-apis [args]
