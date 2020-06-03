@@ -1,4 +1,4 @@
-(ns ziggurat.messaging.connection
+(ns ziggurat.messaging.impl.rabbitmq.connection
   (:require [clojure.tools.logging :as log]
             [langohr.core :as rmq]
             [mount.core :as mount :refer [defstate start]]
@@ -11,6 +11,8 @@
            [java.util.concurrent Executors ExecutorService]
            [io.opentracing.contrib.rabbitmq TracingConnectionFactory]
            [com.rabbitmq.client.impl DefaultCredentialsProvider]))
+
+(def connection (atom nil))
 
 (defn is-connection-required? []
   (let [stream-routes (:stream-routes (mount/args))
@@ -60,6 +62,8 @@
       (.close conn)
       (rmq/close conn))
     (log/info "Disconnected from RabbitMQ")))
+
+
 
 (defstate connection
   :start (start-connection)

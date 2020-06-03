@@ -34,6 +34,7 @@
   "
   (initialize [impl args])
   (terminate  [impl])
-  (publish [impl message-payload]))
+  (forward [impl message-payload & args])
+  (publish [impl message-payload & args]))
 
 
