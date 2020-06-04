@@ -40,7 +40,7 @@
   (messaging-producer/make-queues (get args :stream-routes)))
 
 (defn start-messaging-producer [args]
-  (start-rabbitmq-connection args)
+  ;(start-rabbitmq-connection args)
   (start* #{#'messaging-provider/producer} args))
 
 (defn stop-messaging-producer []

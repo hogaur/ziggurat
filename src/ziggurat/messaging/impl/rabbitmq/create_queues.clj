@@ -7,7 +7,7 @@
             [sentry-clj.async :as sentry]
             [taoensso.nippy :as nippy]
             [ziggurat.config :refer [ziggurat-config rabbitmq-config channel-retry-config]]
-            [ziggurat.messaging.connection :refer [connection is-connection-required?]]
+            [ziggurat.messaging.impl.rabbitmq.connection :refer [connection is-connection-required?]]
             [ziggurat.messaging.util :refer :all]
             [ziggurat.retry :refer [with-retry]]
             [ziggurat.sentry :refer [sentry-reporter]]))

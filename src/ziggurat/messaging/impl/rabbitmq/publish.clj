@@ -5,7 +5,7 @@
             [sentry-clj.async :as sentry]
             [clojure.tools.logging :as log]
             [ziggurat.sentry :refer [sentry-reporter]]
-            [ziggurat.messaging.connection :refer [connection]]
+            [ziggurat.messaging.impl.rabbitmq.connection :refer [connection]]
             [ziggurat.config :refer [ziggurat-config rabbitmq-config channel-retry-config]]
             [ziggurat.messaging.util :refer :all]
             [langohr.channel :as lch]))
@@ -18,6 +18,16 @@
             (assoc header-map (.key record-header) (String. (.value record-header))))
           {}
           record-headers))
+
+(defn- properties-for-publish
+  [expiration headers]
+  (let [props {:content-type "application/octet-stream"
+               :persistent   true
+               :headers      (record-headers->map headers)}]
+    (if expiration
+      (assoc props :expiration (str expiration))
+      props)))
+
 (defn- publish
   ([exchange message-payload]
    (publish exchange message-payload nil))
@@ -33,15 +43,6 @@
                             "Pushing message to rabbitmq failed, data: " message-payload)
        (throw (ex-info "Pushing message to rabbitMQ failed after retries, data: " {:type :rabbitmq-publish-failure
                                                                                    :error e}))))))
-
-(defn- properties-for-publish
-  [expiration headers]
-  (let [props {:content-type "application/octet-stream"
-               :persistent   true
-               :headers      (record-headers->map headers)}]
-    (if expiration
-      (assoc props :expiration (str expiration))
-      props)))
 
 (defn publish-message
   ([message destination]
@@ -184,7 +185,6 @@
     (publish exchange-name message-payload)))
 
 (defn retry [{:keys [retry-count topic-entity] :as message-payload}]
-  (println "Calling retry")
   (when (-> (ziggurat-config) :retry :enabled)
     (cond
       (nil? retry-count) (publish-to-delay-queue (assoc message-payload :retry-count (dec (-> (ziggurat-config) :retry :count))))

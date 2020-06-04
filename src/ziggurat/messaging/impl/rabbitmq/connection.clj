@@ -46,7 +46,7 @@
   (when (is-connection-required?)
     (try
       (let [connection (create-connection (assoc (:rabbit-mq-connection (ziggurat-config)) :executor (Executors/newFixedThreadPool (total-thread-count))) (get-in (ziggurat-config) [:tracer :enabled]))]
-        (doto connection
+          (doto connection
           (.addShutdownListener
            (reify ShutdownListener
              (shutdownCompleted [_ cause]
