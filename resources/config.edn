@@ -24,7 +24,7 @@
             :rabbit-mq            {:delay       {:queue-name           "application_name_delay_queue_test"
                                                  :exchange-name        "application_name_delay_exchange_test"
                                                  :dead-letter-exchange "application_name_instant_exchange_test"
-                                                 :queue-timeout-ms     [100 :int]}
+                                                 :queue-timeout-ms     [1000 :int]}
                                    :instant     {:queue-name    "application_name_instant_queue_test"
                                                  :exchange-name "application_name_instant_exchange_test"}
                                    :dead-letter {:queue-name    "application_name_dead_letter_queue_test"

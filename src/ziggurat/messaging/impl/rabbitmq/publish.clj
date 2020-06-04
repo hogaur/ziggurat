@@ -4,6 +4,7 @@
             [ziggurat.retry :refer [with-retry]]
             [sentry-clj.async :as sentry]
             [clojure.tools.logging :as log]
+            [ziggurat.sentry :refer [sentry-reporter]]
             [ziggurat.messaging.connection :refer [connection]]
             [ziggurat.config :refer [ziggurat-config rabbitmq-config channel-retry-config]]
             [ziggurat.messaging.util :refer :all]
@@ -134,6 +135,7 @@
   (let [topic-entity  (:topic-entity message-payload)
         exchange-name (get-delay-exchange-name topic-entity message-payload)
         queue-timeout-ms (get-queue-timeout-ms message-payload)]
+    (println "DELAY QUEUE TIMEOUT => " queue-timeout-ms)
     (publish exchange-name message-payload queue-timeout-ms)))
 
 (defn publish-to-dead-queue [message-payload]
@@ -167,6 +169,7 @@
     (publish exchange-name message-payload)))
 
 (defn retry [{:keys [retry-count topic-entity] :as message-payload}]
+  (println "Calling retry")
   (when (-> (ziggurat-config) :retry :enabled)
     (cond
       (nil? retry-count) (publish-to-delay-queue (assoc message-payload :retry-count (dec (-> (ziggurat-config) :retry :count))))

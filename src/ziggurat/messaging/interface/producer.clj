@@ -34,7 +34,7 @@
   "
   (initialize [impl args])
   (terminate  [impl])
-  (forward [impl message-payload & args])
-  (publish [impl message-payload & args]))
+  (retry [impl message-payload])
+  (publish [impl message-payload return-code]))
 
 

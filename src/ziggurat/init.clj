@@ -17,8 +17,8 @@
             [ziggurat.tracer :as tracer]
             [ziggurat.util.java-util :as util])
   (:gen-class
-   :methods [^{:static true} [init [java.util.Map] void]]
-   :name tech.gojek.ziggurat.internal.Init))
+    :methods [^{:static true} [init [java.util.Map] void]]
+    :name tech.gojek.ziggurat.internal.Init))
 
 (defn- start*
   ([states]
@@ -42,6 +42,9 @@
 (defn start-messaging-producer [args]
   (start-rabbitmq-connection args)
   (start* #{#'messaging-provider/producer} args))
+
+(defn stop-messaging-producer []
+  (mount/stop #'messaging-provider/producer))
 
 (defn start-kafka-producers []
   (start* #{#'kafka-producers}))
@@ -94,6 +97,7 @@
   (mount/stop #'server/server)
   (stop-rabbitmq-connection))
 
+
 (def valid-modes-fns
   {:api-server     {:start-fn start-server :stop-fn stop-server}
    :stream-worker  {:start-fn start-stream :stop-fn stop-stream}
@@ -144,17 +148,17 @@
 
 (defn- add-shutdown-hook [actor-stop-fn modes]
   (.addShutdownHook
-   (Runtime/getRuntime)
-   (Thread. ^Runnable #(do (stop actor-stop-fn modes)
-                           (shutdown-agents))
-            "Shutdown-handler")))
+    (Runtime/getRuntime)
+    (Thread. ^Runnable #(do (stop actor-stop-fn modes)
+                            (shutdown-agents))
+             "Shutdown-handler")))
 
 (s/defschema StreamRoute
   (s/conditional
-   #(and (seq %)
-         (map? %))
-   {s/Keyword {:handler-fn (s/pred #(fn? %))
-               s/Keyword   (s/pred #(fn? %))}}))
+    #(and (seq %)
+          (map? %))
+    {s/Keyword {:handler-fn (s/pred #(fn? %))
+                s/Keyword   (s/pred #(fn? %))}}))
 
 (defn validate-stream-routes [stream-routes modes]
   (when (or (empty? modes) (contains? (set modes) :stream-worker))
