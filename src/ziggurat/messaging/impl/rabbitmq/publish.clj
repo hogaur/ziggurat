@@ -18,16 +18,6 @@
             (assoc header-map (.key record-header) (String. (.value record-header))))
           {}
           record-headers))
-
-(defn- properties-for-publish
-  [expiration headers]
-  (let [props {:content-type "application/octet-stream"
-               :persistent   true
-               :headers      (record-headers->map headers)}]
-    (if expiration
-      (assoc props :expiration (str expiration))
-      props)))
-
 (defn- publish
   ([exchange message-payload]
    (publish exchange message-payload nil))
@@ -42,6 +32,31 @@
        (sentry/report-error sentry-reporter e
                             "Pushing message to rabbitmq failed, data: " message-payload)
        (throw (ex-info "Pushing message to rabbitMQ failed after retries, data: " {:type :rabbitmq-publish-failure
+                                                                                   :error e}))))))
+
+(defn- properties-for-publish
+  [expiration headers]
+  (let [props {:content-type "application/octet-stream"
+               :persistent   true
+               :headers      (record-headers->map headers)}]
+    (if expiration
+      (assoc props :expiration (str expiration))
+      props)))
+
+(defn publish-message
+  ([message destination]
+   (publish-message message destination nil))
+  ([message destination delay]
+   (try
+     (with-retry {:count      5
+                  :wait       100
+                  :on-failure #(log/error "publishing message to rabbitmq failed with error " (.getMessage %))}
+                 (with-open [ch (lch/open connection)]
+                   (lb/publish ch destination "" (nippy/freeze (dissoc message :headers)) (properties-for-publish delay (:headers message)))))
+     (catch Throwable e
+       (sentry/report-error sentry-reporter e
+                            "Pushing message to rabbitmq failed, data: " message)
+       (throw (ex-info "Pushing message to rabbitMQ failed after retries, data: " {:type  :rabbitmq-publish-failure
                                                                                    :error e}))))))
 
 (defn- retry-type []

@@ -34,6 +34,6 @@
   "
   (initialize [impl args])
   (terminate  [impl])
-  (publish [impl message-payload return-code]))
+  (publish [impl message destination] [impl message destination delay]))
 
 

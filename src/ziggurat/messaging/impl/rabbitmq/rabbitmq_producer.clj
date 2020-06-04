@@ -13,8 +13,12 @@
   Producer
   (initialize [this args] (do (println "I'm initializing")
                               (println "args => " args)
+                              (mount/start #'rmq-conn/connection)
                               (queues/make-queues (:stream-routes args))))
   (terminate [this]
-    (println "I'm terminating"))
-  (publish [this message-payload return-code]
-    (println "I'm publishing")))
+    (do (println "I'm terminating")
+        (mount/stop #'rmq-conn/connection)))
+  (publish [this message destination delay]
+    (pub/publish-message message destination delay))
+  (publish [this message destination]
+    (pub/publish-message message destination)))

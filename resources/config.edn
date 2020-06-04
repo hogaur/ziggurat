@@ -16,8 +16,8 @@
                                    :thread-termination-wait-s [1 :int]}
             :rabbit-mq-connection {:host            "localhost"
                                    :port            [5672 :int]
-                                   :username        "guest"
-                                   :password        "guest"
+                                   :username        "actor"
+                                   :password        "actor"
                                    :channel-timeout [2000 :int]}
             :jobs                 {:instant {:worker-count   [4 :int]
                                              :prefetch-count [4 :int]}}
