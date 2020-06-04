@@ -11,7 +11,9 @@
   Producer
   (initialize [this args] (do (println "I'm initializing")
                               (println "args => " args)
-                              (mount/start #'rmq-conn/connection)
+                              (-> #'rmq-conn/connection
+                                  (mount/with-args args)
+                                  (mount/start))
                               (queues/make-queues (:stream-routes args))))
   (terminate [this]
     (do (println "I'm terminating")

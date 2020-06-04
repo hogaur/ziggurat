@@ -32,7 +32,9 @@
             :retry                {:count   [5 :int]
                                    :type    [:linear :keyword]
                                    :enabled [true :bool]}
-            :messaging-provider   {:producer-class "ziggurat.messaging.impl.rabbitmq.rabbitmq-producer/->RabbitMQProducer"}
+            :messaging-provider   {:producer-class "ziggurat.messaging.impl.rabbitmq.rabbitmq-producer/->RabbitMQProducer"
+                                   :consumer-class "ziggurat.messaging.impl.rabbitmq.rabbitmq-consumer/->RabbitMQConsumer"
+                                   :processing-fn  ""}
             :http-server          {:port         [8010 :int]
                                    :thread-count [100 :int]}
             :stream-router        {:default            {:application-id       "test"

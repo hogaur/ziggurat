@@ -40,7 +40,6 @@
   (messaging-producer/make-queues (get args :stream-routes)))
 
 (defn start-messaging-producer [args]
-  ;(start-rabbitmq-connection args)
   (start* #{#'messaging-provider/producer} args))
 
 (defn stop-messaging-producer []
@@ -68,8 +67,9 @@
 
 (defn start-workers [args]
   (start-kafka-producers)
-  (start-rabbitmq-producers args)
-  (start-rabbitmq-consumers args))
+  ;(start-rabbitmq-producers args)
+  (start-rabbitmq-consumers args)
+  (start-messaging-producer args))
 
 (defn- stop-rabbitmq-connection []
   (mount/stop #'messaging-connection/connection))

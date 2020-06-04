@@ -1,13 +1,14 @@
 (ns ziggurat.messaging.messaging-provider
   (:require [ziggurat.config :refer [statsd-config ziggurat-config]]
             [clojure.tools.logging :as log]
-            [ziggurat.messaging.interface.producer :as producer-interface]
+            [ziggurat.messaging.interface.producer]
+            [ziggurat.messaging.interface.consumer]
             [mount.core :refer [defstate]]
             [ziggurat.messaging.connection]
-
             [ziggurat.tracer]
             [mount.core :as mount])
-  (:import (ziggurat.messaging.interface.producer Producer)))
+  (:import (ziggurat.messaging.interface.producer Producer)
+           (ziggurat.messaging.interface.consumer Consumer)))
 
 (defn- get-implementation-class [class-config-keys]
   (if-let [constructor-clazz (get-in (ziggurat-config) class-config-keys)]
@@ -20,26 +21,23 @@
         constructor))
     nil))
 
-(defn initialise-message-producer []
-  (if-let [producer-impl-constructor (get-implementation-class [:messaging-provider :producer-class])]
-    (producer-impl-constructor)
-    (throw (ex-message "Messaging provider not configured."))))
-
-;; config to be started first
-;; tracer to be started
-;; last connection to be started
-
-;(defn start-required-states []
-;  (do (-> [#'ziggurat.config/config
-;           #'ziggurat.tracer/tracer]
-;          (mount/with-args {:stream-routes {:booking {:handler-fn #()}}})
-;          (mount/start)))
-;  (mount/start #'ziggurat.messaging.connection/connection))
+(defn instantiate [class-config-keys]
+  (if-let [impl-class (get-implementation-class class-config-keys)]
+    (impl-class)
+    (throw (ex-message (format "Class specified by the keys [%s] does not exist" class-config-keys)))))
 
 (defstate producer
   :start (do (println "Initializing the Producer")
-             (let [^Producer producer-impl (initialise-message-producer)]
-               (producer-interface/initialize producer-impl (mount/args))
+             (let [^Producer producer-impl (instantiate [:messaging-provider :producer-class])]
+               (.initialize producer-impl (mount/args))
                producer-impl))
   :stop (do (log/info "Stopping the Producer")
-            (producer-interface/terminate producer)))
+            (.terminate producer)))
+
+(defstate consumer
+          :start (do (println "Initializing the Consumer")
+                     (let [^Consumer consumer-impl (instantiate [:messaging-provider :consumer-class])]
+                       (.initialize consumer-impl (mount/args))
+                       consumer-impl))
+          :stop (do (log/info "Stopping the Consumer")
+                    (.terminate consumer)))
