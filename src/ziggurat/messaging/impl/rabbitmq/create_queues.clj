@@ -1,4 +1,4 @@
-(ns ziggurat.messaging.impl.rabbitmq.create-rabbitmq-queues
+(ns ziggurat.messaging.impl.rabbitmq.create-queues
   (:require [clojure.tools.logging :as log]
             [langohr.basic :as lb]
             [langohr.channel :as lch]

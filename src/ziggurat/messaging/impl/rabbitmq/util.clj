@@ -1,4 +1,4 @@
-(ns ziggurat.messaging.util)
+(ns ziggurat.messaging.impl.rabbitmq.util)
 
 (defn prefixed-queue-name [topic-entity value]
   (str (name topic-entity) "_" value))

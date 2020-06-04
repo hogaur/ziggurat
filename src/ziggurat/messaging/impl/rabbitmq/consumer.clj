@@ -1,4 +1,4 @@
-(ns ziggurat.messaging.consumer
+(ns ziggurat.messaging.impl.rabbitmq.consumer
   (:require [clojure.tools.logging :as log]
             [langohr.basic :as lb]
             [langohr.channel :as lch]
