@@ -5,12 +5,13 @@
             [sentry-clj.async :as sentry]
             [clojure.tools.logging :as log]
             [ziggurat.sentry :refer [sentry-reporter]]
-            [ziggurat.messaging.impl.rabbitmq.connection :refer [connection]]
+            [ziggurat.messaging.impl.rabbitmq.connection :refer [get-connection]]
             [ziggurat.config :refer [ziggurat-config rabbitmq-config channel-retry-config]]
             [ziggurat.messaging.util :refer :all]
             [langohr.channel :as lch]))
 
 (def MAX_EXPONENTIAL_RETRIES 25)
+(def connection (get-connection))
 
 
 (defn- record-headers->map [record-headers]

@@ -5,13 +5,15 @@
             [langohr.consumers :as lcons]
             [ziggurat.config :refer [get-in-config]]
             [ziggurat.mapper :as mpr]
-            [ziggurat.messaging.impl.rabbitmq.connection :refer [connection]]
+            [ziggurat.messaging.impl.rabbitmq.connection :refer [get-connection]]
             [ziggurat.sentry :refer [sentry-reporter]]
             [ziggurat.messaging.util :refer :all]
             [ziggurat.metrics :as metrics]
             [sentry-clj.async :as sentry]
             [taoensso.nippy :as nippy]
             [schema.core :as s]))
+
+(def connection (get-connection))
 
 (defn- convert-to-message-payload
   "This function is used for migration from Ziggurat Version 2.x to 3.x. It checks if the message is a message payload or a message(pushed by Ziggurat version < 3.0.0) and converts messages to

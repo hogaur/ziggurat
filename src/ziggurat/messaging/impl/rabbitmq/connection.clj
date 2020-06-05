@@ -7,12 +7,12 @@
             [ziggurat.sentry :refer [sentry-reporter]]
             [ziggurat.channel :refer [get-keys-for-topic]]
             [ziggurat.tracer :refer [tracer]])
-  (:import [com.rabbitmq.client ShutdownListener Address ListAddressResolver]
+  (:import [com.rabbitmq.client ShutdownListener Address ListAddressResolver AMQP$Connection]
            [java.util.concurrent Executors ExecutorService]
-           [io.opentracing.contrib.rabbitmq TracingConnectionFactory]
+           [io.opentracing.contrib.rabbitmq TracingConnectionFactory TracingConnection]
            [com.rabbitmq.client.impl DefaultCredentialsProvider]))
 
-(def connection (atom nil))
+(def ^{:private true} connection (atom nil))
 
 (defn is-connection-required? []
   (let [stream-routes (:stream-routes (mount/args))
@@ -41,7 +41,7 @@
 
     (rmq/connect config)))
 
-(defn start-connection []
+(defn- start-connection []
   (log/info "Connecting to RabbitMQ")
   (when (is-connection-required?)
     (try
@@ -61,10 +61,19 @@
     (if (get-in (ziggurat-config) [:tracer :enabled])
       (.close conn)
       (rmq/close conn))
+    (reset! connection nil)
     (log/info "Disconnected from RabbitMQ")))
 
 
 
-(defstate connection
-  :start (start-connection)
-  :stop (stop-connection connection))
+;(defstate connection
+;  :start (start-connection)
+;  :stop (stop-connection connection))
+
+(defn get-connection []
+  (if (or (instance? AMQP$Connection @connection)
+          (instance? TracingConnection @connection))
+    @connection
+    (do (reset! connection (start-connection))
+        @connection)))
+
