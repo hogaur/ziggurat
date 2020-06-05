@@ -41,7 +41,7 @@
 
     (rmq/connect config)))
 
-(defn- start-connection []
+(defn start-connection []
   (log/info "Connecting to RabbitMQ")
   (when (is-connection-required?)
     (try
@@ -56,7 +56,7 @@
         (sentry/report-error sentry-reporter e "Error while starting RabbitMQ connection")
         (throw e)))))
 
-(defn- stop-connection [conn]
+(defn stop-connection [conn]
   (when (is-connection-required?)
     (if (get-in (ziggurat-config) [:tracer :enabled])
       (.close conn)
