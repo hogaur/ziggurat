@@ -24,7 +24,7 @@
     (s/validate mpr/message-payload-schema message)
     (catch Exception e
       (log/info "old message format read, converting to message-payload: " message)
-      (let [retry-count (or (:retry-count message) 0)
+      (let [retry-count     (or (:retry-count message) 0)
             message-payload (mpr/->MessagePayload (dissoc message :retry-count) (keyword topic-entity))]
         (assoc message-payload :retry-count retry-count)))))
 
@@ -48,8 +48,9 @@
   (lb/ack ch delivery-tag))
 
 (defn process-message-from-queue [ch meta payload topic-entity processing-fn]
-  (let [delivery-tag (:delivery-tag meta)
-        message-payload      (convert-and-ack-message ch meta payload false topic-entity)]
+  (let [delivery-tag    (:delivery-tag meta)
+        message-payload (convert-and-ack-message ch meta payload false topic-entity)]
+    (println "MESSAGE_PAYLOAD => " message-payload)
     (when message-payload
       (log/infof "Processing message [%s] from RabbitMQ " message-payload)
       (try
@@ -69,7 +70,8 @@
   (lb/qos ch prefetch-count)
   (let [consumer-tag (lcons/subscribe ch
                                       queue-name
-                                      (message-handler #((println "Consuming message")) topic-entity)
+                                      ;; change this to actual mapper-fn
+                                      (message-handler #(println "Consuming message" %) topic-entity)
                                       {:handle-shutdown-signal-fn (fn [consumer_tag reason]
                                                                     (log/infof "channel closed with consumer tag: %s, reason: %s " consumer_tag, reason))
                                        :handle-consume-ok-fn      (fn [consumer_tag]
@@ -98,9 +100,14 @@
 (defn start-subscribers
   "Starts the subscriber to the instant queue of the rabbitmq"
   [stream-routes]
+  (println "Stream rotues")
+  (println stream-routes)
   (doseq [stream-route stream-routes]
     (let [topic-entity  (first stream-route)
           topic-handler (-> stream-route second :handler-fn)
           channels      (-> stream-route second (dissoc :handler-fn))]
+      (println "TE => " topic-entity)
+      (println "TH => " topic-handler)
+      (println "CHS => " channels)
       (start-channels-subscriber channels topic-entity)
       (start-retry-subscriber* topic-handler topic-entity (keys channels)))))
