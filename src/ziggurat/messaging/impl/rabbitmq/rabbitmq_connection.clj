@@ -5,7 +5,7 @@
 
 (def ^{:private true} connection (atom nil))
 
-(defn start-connection []
+(defn get-connection []
   (if (or (instance? AMQP$Connection @connection)
           (instance? TracingConnection @connection))
     @connection
@@ -16,5 +16,3 @@
   (do
     (connection/stop-connection connection)
     (reset! connection nil)))
-
-(defn get-conn [] @connection)
