@@ -106,8 +106,5 @@
     (let [topic-entity  (first stream-route)
           topic-handler (-> stream-route second :handler-fn)
           channels      (-> stream-route second (dissoc :handler-fn))]
-      (println "TE => " topic-entity)
-      (println "TH => " topic-handler)
-      (println "CHS => " channels)
       (start-channels-subscriber channels topic-entity)
       (start-retry-subscriber* topic-handler topic-entity (keys channels)))))
