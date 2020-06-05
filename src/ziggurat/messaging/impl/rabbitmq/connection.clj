@@ -64,16 +64,14 @@
     (reset! connection nil)
     (log/info "Disconnected from RabbitMQ")))
 
-
-
 ;(defstate connection
 ;  :start (start-connection)
 ;  :stop (stop-connection connection))
 
-(defn get-connection []
-  (if (or (instance? AMQP$Connection @connection)
-          (instance? TracingConnection @connection))
-    @connection
-    (do (reset! connection (start-connection))
-        @connection)))
+(defn initialize-connection []
+  (when (nil? @connection)
+    (reset! connection (start-connection)))
+  @connection)
+
+(defn get-connection [] @connection)
 

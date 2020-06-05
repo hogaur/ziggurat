@@ -13,8 +13,6 @@
             [taoensso.nippy :as nippy]
             [schema.core :as s]))
 
-(def connection (get-connection))
-
 (defn- convert-to-message-payload
   "This function is used for migration from Ziggurat Version 2.x to 3.x. It checks if the message is a message payload or a message(pushed by Ziggurat version < 3.0.0) and converts messages to
    message-payload to pass onto the mapper-fn.
@@ -82,7 +80,7 @@
 (defn start-retry-subscriber* [mapper-fn topic-entity channels]
   (when (get-in-config [:retry :enabled])
     (dotimes [_ (get-in-config [:jobs :instant :worker-count])]
-      (start-subscriber* (lch/open connection)
+      (start-subscriber* (lch/open (get-connection))
                          (get-in-config [:jobs :instant :prefetch-count])
                          (prefixed-queue-name topic-entity (get-in-config [:rabbit-mq :instant :queue-name]))
                          (mpr/mapper-func mapper-fn channels)
@@ -93,7 +91,7 @@
     (let [channel-key        (first channel)
           channel-handler-fn (second channel)]
       (dotimes [_ (get-in-config [:stream-router topic-entity :channels channel-key :worker-count])]
-        (start-subscriber* (lch/open connection)
+        (start-subscriber* (lch/open (get-connection))
                            1
                            (prefixed-channel-name topic-entity channel-key (get-in-config [:rabbit-mq :instant :queue-name]))
                            (mpr/channel-mapper-func channel-handler-fn channel-key)
@@ -108,5 +106,8 @@
     (let [topic-entity  (first stream-route)
           topic-handler (-> stream-route second :handler-fn)
           channels      (-> stream-route second (dissoc :handler-fn))]
+      (println "TE => " topic-entity)
+      (println "TH => " topic-handler)
+      (println "CHANNELS => " channels)
       (start-channels-subscriber channels topic-entity)
       (start-retry-subscriber* topic-handler topic-entity (keys channels)))))

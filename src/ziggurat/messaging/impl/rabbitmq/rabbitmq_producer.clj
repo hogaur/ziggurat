@@ -9,15 +9,12 @@
 
 (deftype RabbitMQProducer []
   Producer
-  (initialize [this args] (do (println "I'm initializing")
-                              (println "args => " args)
-                              (-> #'rmq-conn/connection
-                                  (mount/with-args args)
-                                  (mount/start))
+  (initialize [this args] (do (rmq-conn/initialize-connection)
                               (queues/make-queues (:stream-routes args))))
   (terminate [this]
-    (do (println "I'm terminating")
-        (mount/stop #'rmq-conn/connection)))
+    (let [conn (rmq-conn/get-connection)]
+      (when-not (nil? conn)
+        (rmq-conn/stop-connection conn))))
   (publish [this message destination delay]
     (pub/publish-message message destination delay))
   (publish [this message destination]

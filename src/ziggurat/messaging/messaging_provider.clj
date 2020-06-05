@@ -4,13 +4,13 @@
             [ziggurat.messaging.interface.producer]
             [ziggurat.messaging.interface.consumer]
             [mount.core :refer [defstate]]
-            [ziggurat.messaging.connection]
+            [ziggurat.messaging.impl.rabbitmq.connection :as rmq-conn]
             [ziggurat.tracer]
             [mount.core :as mount])
   (:import (ziggurat.messaging.interface.producer Producer)
            (ziggurat.messaging.interface.consumer Consumer)))
 
-(defn- get-implementation-class [class-config-keys]
+(defn get-implementation-class [class-config-keys]
   (if-let [constructor-clazz (get-in (ziggurat-config) class-config-keys)]
     (let [constructor-class-symbol (symbol constructor-clazz)
           _                        (require [(symbol (namespace constructor-class-symbol))])
@@ -35,9 +35,9 @@
             (.terminate producer)))
 
 (defstate consumer
-          :start (do (println "Initializing the Consumer")
-                     (let [^Consumer consumer-impl (instantiate [:messaging-provider :consumer-class])]
-                       (.initialize consumer-impl (mount/args))
-                       consumer-impl))
-          :stop (do (log/info "Stopping the Consumer")
-                    (.terminate consumer)))
+  :start (do (println "Initializing the Consumer")
+             (let [^Consumer consumer-impl (instantiate [:messaging-provider :consumer-class])]
+               (.initialize consumer-impl (mount/args))
+               consumer-impl))
+  :stop (do (log/info "Stopping the Consumer")
+            (.terminate consumer)))

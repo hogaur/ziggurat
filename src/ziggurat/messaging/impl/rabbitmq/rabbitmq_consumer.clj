@@ -6,15 +6,13 @@
 
 (deftype RabbitMQConsumer []
   Consumer
-  (initialize [this args] (do (println "I'm initializing")
-                              (println "args => " args)
-                              (-> #'rmq-conn/connection
-                                  (mount/with-args args)
-                                  (mount/start))
-                              (rmq-subs/start-subscribers (:stream-routes args))))
+  (initialize [this args] (do
+                            (rmq-conn/initialize-connection)
+                            (rmq-subs/start-subscribers (:stream-routes args))))
   (terminate [this]
-    (do (println "I'm terminating")
-        (mount/stop #'rmq-conn/connection)))
+    (let [conn (rmq-conn/get-connection)]
+      (when-not (nil? conn)
+        (rmq-conn/stop-connection conn))))
   (read [impl message source]
     #())
   (read [impl message source ack?]

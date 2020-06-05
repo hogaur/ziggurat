@@ -1,4 +1,4 @@
-(ns ziggurat.messaging.dead-set
+(ns ziggurat.messaging.impl.rabbitmq.dead-set
   (:require [ziggurat.messaging.consumer :as consumer]
             [ziggurat.messaging.producer :as producer]
             [clojure.tools.logging :as log]))

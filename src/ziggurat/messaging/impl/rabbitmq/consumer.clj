@@ -8,7 +8,7 @@
             [taoensso.nippy :as nippy]
             [ziggurat.config :refer [get-in-config]]
             [ziggurat.mapper :as mpr]
-            [ziggurat.messaging.connection :refer [connection]]
+            [ziggurat.messaging.impl.rabbitmq.connection :refer [get-connection]]
             [ziggurat.sentry :refer [sentry-reporter]]
             [ziggurat.messaging.util :refer :all]
             [ziggurat.metrics :as metrics]))
@@ -86,7 +86,7 @@
    (get-dead-set-messages topic-entity nil count))
   ([topic-entity channel count]
    (remove nil?
-           (with-open [ch (lch/open connection)]
+           (with-open [ch (lch/open (get-connection))]
              (doall (for [_ (range count)]
                       (read-message-from-queue ch (construct-queue-name topic-entity channel) topic-entity false)))))))
 
@@ -96,7 +96,7 @@
   ([topic-entity count processing-fn]
    (process-dead-set-messages topic-entity nil count processing-fn))
   ([topic-entity channel count processing-fn]
-   (with-open [ch (lch/open connection)]
+   (with-open [ch (lch/open (get-connection))]
      (doall (for [_ (range count)]
               (let [queue-name     (construct-queue-name topic-entity channel)
                     [meta payload] (lb/get ch queue-name false)]
@@ -120,7 +120,7 @@
 (defn start-retry-subscriber* [mapper-fn topic-entity channels]
   (when (get-in-config [:retry :enabled])
     (dotimes [_ (get-in-config [:jobs :instant :worker-count])]
-      (start-subscriber* (lch/open connection)
+      (start-subscriber* (lch/open (get-connection))
                          (get-in-config [:jobs :instant :prefetch-count])
                          (prefixed-queue-name topic-entity (get-in-config [:rabbit-mq :instant :queue-name]))
                          (mpr/mapper-func mapper-fn channels)
@@ -131,7 +131,7 @@
     (let [channel-key        (first channel)
           channel-handler-fn (second channel)]
       (dotimes [_ (get-in-config [:stream-router topic-entity :channels channel-key :worker-count])]
-        (start-subscriber* (lch/open connection)
+        (start-subscriber* (lch/open (get-connection))
                            1
                            (prefixed-channel-name topic-entity channel-key (get-in-config [:rabbit-mq :instant :queue-name]))
                            (mpr/channel-mapper-func channel-handler-fn channel-key)

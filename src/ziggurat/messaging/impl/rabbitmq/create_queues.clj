@@ -13,7 +13,6 @@
             [ziggurat.sentry :refer [sentry-reporter]]))
 
 (def MAX_EXPONENTIAL_RETRIES 25)
-(def connection (get-connection))
 
 (defn delay-queue-name [topic-entity queue-name]
   (prefixed-queue-name topic-entity queue-name))
@@ -38,7 +37,7 @@
      (let [props (if dead-letter-exchange
                    {"x-dead-letter-exchange" dead-letter-exchange}
                    {})]
-       (let [ch (lch/open connection)]
+       (let [ch (lch/open (get-connection))]
          (create-queue queue-name props ch)
          (declare-exchange ch exchange-name)
          (bind-queue-to-exchange ch queue-name exchange-name)))
