@@ -5,7 +5,7 @@
             [langohr.consumers :as lcons]
             [ziggurat.config :refer [get-in-config]]
             [ziggurat.mapper :as mpr]
-            [ziggurat.messaging.connection :refer [connection]]
+            [ziggurat.messaging.impl.rabbitmq.connection :refer [connection]]
             [ziggurat.sentry :refer [sentry-reporter]]
             [ziggurat.messaging.util :refer :all]
             [ziggurat.metrics :as metrics]

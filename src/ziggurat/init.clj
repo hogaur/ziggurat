@@ -65,6 +65,12 @@
   (start-rabbitmq-connection args)
   (start* #{#'server/server} args))
 
+(defn start-messaging-consumers [args]
+  (start* #{#'messaging-provider/consumer} args))
+
+(defn stop-messaging-consumers []
+  (mount/stop #{#'messaging-provider/consumer}))
+
 (defn start-workers [args]
   (start-kafka-producers)
   ;(start-rabbitmq-producers args)
