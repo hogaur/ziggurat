@@ -15,7 +15,9 @@
     (let [conn (rmq-conn/get-connection)]
       (when-not (nil? conn)
         (rmq-conn/stop-connection conn))))
-  (publish [this message destination delay]
-    (pub/publish-message message destination delay))
-  (publish [this message destination]
-    (pub/publish-message message destination)))
+  (retry [impl message-payload] (pub/retry message-payload))
+  (publish [this message topic-entity]
+    (pub/publish-message message topic-entity))
+  ;(publish [this message destination]
+  ;  (pub/publish-message message destination))
+  )

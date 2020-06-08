@@ -71,7 +71,7 @@
   (let [consumer-tag (lcons/subscribe ch
                                       queue-name
                                       ;; change this to actual mapper-fn
-                                      (message-handler #(println "Consuming message" %) topic-entity)
+                                      (message-handler wrapped-mapper-fn topic-entity)
                                       {:handle-shutdown-signal-fn (fn [consumer_tag reason]
                                                                     (log/infof "channel closed with consumer tag: %s, reason: %s " consumer_tag, reason))
                                        :handle-consume-ok-fn      (fn [consumer_tag]
