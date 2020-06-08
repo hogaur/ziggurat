@@ -21,11 +21,14 @@
 
 (defn- properties-for-publish
   [expiration headers]
+  (println "EXP => " expiration)
+  (println "HEADERS => " headers)
   (let [props {:content-type "application/octet-stream"
                :persistent   true
                :headers      (record-headers->map headers)}]
     (if expiration
-      (assoc props :expiration (str expiration))
+      (do (println (assoc props :expiration (str expiration)))
+          (assoc props :expiration (str expiration)))
       props)))
 
 (defn- publish
