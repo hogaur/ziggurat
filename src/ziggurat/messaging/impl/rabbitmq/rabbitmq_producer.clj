@@ -17,7 +17,4 @@
         (rmq-conn/stop-connection conn))))
   (retry [impl message-payload] (pub/retry message-payload))
   (publish [this message topic-entity]
-    (pub/publish-message message topic-entity))
-  ;(publish [this message destination]
-  ;  (pub/publish-message message destination))
-  )
+    (pub/publish-message message topic-entity)))

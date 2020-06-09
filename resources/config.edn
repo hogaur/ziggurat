@@ -34,6 +34,7 @@
                                    :enabled [true :bool]}
             :messaging-provider   {:producer-class "ziggurat.messaging.impl.rabbitmq.rabbitmq-producer/->RabbitMQProducer"
                                    :consumer-class "ziggurat.messaging.impl.rabbitmq.rabbitmq-consumer/->RabbitMQConsumer"
+                                   :channel-class  "ziggurat.messaging.impl.rabbitmq.rabbitmq-channel/->RabbitMQChannel"
                                    :processing-fn  ""}
             :http-server          {:port         [8010 :int]
                                    :thread-count [100 :int]}

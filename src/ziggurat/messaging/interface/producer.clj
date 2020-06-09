@@ -5,7 +5,5 @@
   (initialize [impl args])
   (terminate  [impl])
   (retry [impl message-payload])
-  (publish [impl message topic-entity]
-    ;[impl message topic-entity delay]
-))
+  (publish [impl message topic-entity]))
 

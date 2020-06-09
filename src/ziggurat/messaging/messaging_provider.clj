@@ -8,7 +8,8 @@
             [ziggurat.tracer]
             [mount.core :as mount])
   (:import (ziggurat.messaging.interface.producer Producer)
-           (ziggurat.messaging.interface.consumer Consumer)))
+           (ziggurat.messaging.interface.consumer Consumer)
+           (ziggurat.messaging.interface.channel Channel)))
 
 (defn get-implementation-class [class-config-keys]
   (if-let [constructor-clazz (get-in (ziggurat-config) class-config-keys)]
@@ -41,3 +42,11 @@
                consumer-impl))
   :stop (do (log/info "Stopping the Consumer")
             (.terminate consumer)))
+
+(defstate channel
+          :start (do (println "Initializing Channels")
+                     (let [^Channel channel-impl (instantiate [:messaging-provider :channel-class])]
+                       (.initialize channel-impl (mount/args))
+                       channel-impl))
+          :stop (do (log/info "Stopping the Consumer")
+                    (.terminate consumer)))

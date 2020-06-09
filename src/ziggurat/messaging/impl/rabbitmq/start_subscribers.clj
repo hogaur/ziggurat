@@ -50,7 +50,6 @@
 (defn process-message-from-queue [ch meta payload topic-entity processing-fn]
   (let [delivery-tag    (:delivery-tag meta)
         message-payload (convert-and-ack-message ch meta payload false topic-entity)]
-    (println "MESSAGE_PAYLOAD => " message-payload)
     (when message-payload
       (log/infof "Processing message [%s] from RabbitMQ " message-payload)
       (try
@@ -100,14 +99,9 @@
 (defn start-subscribers
   "Starts the subscriber to the instant queue of the rabbitmq"
   [stream-routes]
-  (println "Stream rotues")
-  (println stream-routes)
   (doseq [stream-route stream-routes]
     (let [topic-entity  (first stream-route)
           topic-handler (-> stream-route second :handler-fn)
           channels      (-> stream-route second (dissoc :handler-fn))]
-      (println "TE => " topic-entity)
-      (println "TH => " topic-handler)
-      (println "CHANNELS => " channels)
       (start-channels-subscriber channels topic-entity)
       (start-retry-subscriber* topic-handler topic-entity (keys channels)))))
