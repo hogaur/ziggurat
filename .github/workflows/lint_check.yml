@@ -1,4 +1,4 @@
-name: LintCheck
+name: Lint
 
 on: [push, pull_request]
 
