@@ -18,7 +18,7 @@ jobs:
         with:
           lein: '2.8.1'
       - uses: actions/checkout@v2
-
+        ref: ${{ github.event.workflow_run.head_branch }}
       - name: Run Tests on Kafka 1.x
         run: ./bin/run_tests_in_ci.sh
         env:
@@ -34,6 +34,7 @@ jobs:
         with:
           lein: '2.8.1'
       - uses: actions/checkout@v2
+        ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Run Tests on Kafka 2.x
         run: ./bin/run_tests_in_ci.sh
@@ -50,6 +51,7 @@ jobs:
         with:
           lein: '2.8.1'
       - uses: actions/checkout@v2
+        ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Calculate Coverage
         run: make coverage
