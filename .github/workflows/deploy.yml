@@ -1,6 +1,5 @@
 name: Deploy to Clojars
 
-# Triggers the workflow on push or pull request events
 on:
   push:
     tags:
@@ -13,7 +12,6 @@ on:
 jobs:
   deploy_to_clojars:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/setup-java@v1
         with:
