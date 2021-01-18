@@ -2,7 +2,8 @@ name: Run Tests
 
 on:
   workflow_run:
-    workflows: ["Lint Check"]
+    workflows:
+      - LintCheck
     types:
       - completed
 
